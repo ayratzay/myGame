@@ -5,6 +5,7 @@ import random
 class City():
     def __init__(self):
         self.communities = {}
+        self.goods_stock = 0
 
     def add_migrants(self):
         rand_pop = random.randrange(0, 5)
@@ -21,14 +22,21 @@ class City():
 
     def alter_epoch(self):
 
-        for community in self.communities.itervalues():   # UPGRADE COMMUNITIES
+        for community in self.communities.itervalues():   #UPGRADE COMMUNITIES
             community.upgrade_community()
 
         for community in self.communities.itervalues():   #KILL ALL EMPTY COMMUNITIES
             community.check_population_()
 
-        self.add_migrants() #RANDOMLY GENERATE MIGRANTS
+        self.add_migrants()          #RANDOMLY GENERATE MIGRANTS
 
+        city_goods_bal = 0
+        for community in self.communities.itervalues():   #PRODUCE and CONSUME goods
+            city_goods_bal = city_goods_bal - community.consume_goods()
+            if community.__class__ == Household_community:
+                city_goods_bal = city_goods_bal + community.produce_goods()
+        self.goods_stock = self.goods_stock + city_goods_bal
+        print "city goods stock changed to %d" % (self.goods_stock)
 
     def __str__(self):
         return "city with %d communities" % (len(self.communities))
@@ -52,6 +60,9 @@ class Community():
         if self.population == 0:
             self.__class__ = Dead_community
             self.type = "Dead community"
+
+    def consume_goods(self):
+        return (self.population * 1)
 
     def __str__(self):
         return "community %s has %d people in it, level %d" % (self.type, self.population,self.level)
@@ -77,6 +88,10 @@ class Household_community(Community):
         self.level = self.level + 1
         self.type = self.type + "+"
         print "community %s upgraded to level %d" % (self.type, self.level)
+
+    def produce_goods(self):
+        return self.population * 2  #GOODS production variables#
+
 
 class Dead_community(Community):
     def __init__(self):
