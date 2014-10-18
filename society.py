@@ -8,7 +8,7 @@ class City():
         self.goods_stock = 0
 
     def add_migrants(self):
-        rand_pop = random.randrange(0, 5)
+        rand_pop = random.randrange(0, 5)  # balance variable
         if rand_pop == 0:
             print "no one desired to come to your shithole city!"
         else:
@@ -28,7 +28,7 @@ class City():
         for community in self.communities.itervalues():   #KILL ALL EMPTY COMMUNITIES
             community.check_population_()
 
-        self.add_migrants()          #RANDOMLY GENERATE MIGRANTS
+        self.add_migrants()                               #RANDOMLY GENERATE MIGRANTS
 
         city_goods_bal = 0
         for community in self.communities.itervalues():   #PRODUCE and CONSUME goods
@@ -37,6 +37,13 @@ class City():
                 city_goods_bal = city_goods_bal + community.produce_goods()
         self.goods_stock = self.goods_stock + city_goods_bal
         print "city goods stock changed to %d" % (self.goods_stock)
+
+        city_population = 0
+        for community in self.communities.itervalues():   #POPULATION GROWTH
+            community.community_growth()
+            city_population = city_population + community.population
+        print "your city became home for %d habitats" % (city_population)
+
 
     def __str__(self):
         return "city with %d communities" % (len(self.communities))
@@ -53,7 +60,7 @@ class Community():
         self.upgrade_()
 
 
-    def downgrade_community_(self):
+    def downgrade_community(self):
         self.level =- 1
 
     def check_population_(self):
@@ -63,6 +70,13 @@ class Community():
 
     def consume_goods(self):
         return (self.population * 1)
+
+    def community_growth(self):
+        old_pop = self.population
+        new_pop = int(self.population * random.uniform(0.95, 1.35))   # balance variable
+        if old_pop != new_pop:
+            self.population = new_pop
+            print "community %s has changed by %d" % (self.type, (new_pop - old_pop))
 
     def __str__(self):
         return "community %s has %d people in it, level %d" % (self.type, self.population,self.level)
@@ -90,7 +104,7 @@ class Household_community(Community):
         print "community %s upgraded to level %d" % (self.type, self.level)
 
     def produce_goods(self):
-        return self.population * 2  #GOODS production variables#
+        return self.population * 2  # balance variable
 
 
 class Dead_community(Community):
@@ -101,6 +115,6 @@ class Dead_community(Community):
 
 def alter_epoch((city, epoch)):   #
     city.alter_epoch()
-    epoch =+ 1
+    epoch = epoch + 1
     print "for city epoch changed to %d" % (epoch)
     return (city, epoch)
