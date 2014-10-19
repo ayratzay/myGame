@@ -11,14 +11,12 @@ class Population():
         self.goods_consumption = goods_consumption
         self.pid = pid
 
-    def develop_(self, cid, city):
-        self.develop__(cid, city)
 
 class Nomads(Population):
     def __init__(self, pid, size, specialization = "none",good_production = 0, goods_consumption = 1):
         Population.__init__(self, pid, size, specialization, good_production, goods_consumption)
 
-    def develop__(self, cid, city):   # nomad can or join to other community or form new community # balance here!
+    def develop_(self, cid, city):   # nomad can or join to other community or form new community # balance here!
         variants = city.communities.keys()
         choice = random.choice(variants)
         if choice != 0:
@@ -35,7 +33,6 @@ class Nomads(Population):
         city.communities[new_community_cid].add_group(self)
         print "nomad community has developed and formed a new community"
 
-
     def join(self, city, community_key):
         city.communities[0].groups.pop(self.pid)
         city.communities[community_key].add_group(self)
@@ -45,20 +42,14 @@ class Peasants(Population):
     def __init__(self, size = 1, specialization = "none",good_production = 1, goods_consumption = 1):
         Population.__init__(self, size, specialization, good_production, goods_consumption)
 
-    def upgrade_group(self):
-        pass
+    def develop_(self, cid, city):
+        new_group_type = random.choice([Bourgeoisie, Military])
+        self.__class__ = new_group_type
 
 class Bourgeoisie(Population):
     def __init__(self, size = 1, specialization = "merchandise",good_production = 4, goods_consumption = 2):
         Population.__init__(self, size, specialization, good_production, goods_consumption)
 
-    def upgrade_group(self):
-        pass
-
-
 class Military(Population):
     def __init__(self, size = 1, specialization = "army",good_production = 1, goods_consumption = 1):
         Population.__init__(self, size, specialization, good_production, goods_consumption)
-
-    def upgrade_group(self):
-        pass
